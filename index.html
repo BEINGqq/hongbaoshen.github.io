@@ -2,9 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 关键：适配微信移动端 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>情人节快乐 ❤️</title>
+    <title>致胡悦女士 · 专属浪漫 ❤️</title>
     <style>
         * {
             margin: 0;
@@ -13,134 +12,268 @@
         }
         body {
             height: 100vh;
-            /* 渐变背景，营造浪漫氛围 */
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 30%, #e040fb 70%, #ba68c8 100%);
             overflow: hidden;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             color: #fff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            background-size: 200% 200%;
+            animation: bgMove 10s ease infinite;
+            position: relative;
         }
+
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .container {
             text-align: center;
-            z-index: 10; /* 确保文字在爱心上方 */
+            z-index: 20;
+            animation: textFloat 4s ease-in-out infinite;
+            padding: 0 20px;
         }
+
+        @keyframes textFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 新增：图片容器样式 */
+        .img-box {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%; /* 圆形图片，更浪漫 */
+            overflow: hidden;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+            /* 图片轻微旋转动画 */
+            animation: imgRotate 8s ease-in-out infinite;
+        }
+
+        /* 图片旋转动画（缓慢柔和） */
+        @keyframes imgRotate {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        /* 图片自适应 */
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保证图片不变形 */
+        }
+
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
         }
+
+        .name {
+            text-decoration: underline;
+            text-underline-offset: 6px;
+            background: linear-gradient(90deg, #fce4ec, #fff, #f3e5f5, #fff);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shine 4s ease infinite;
+        }
+
+        @keyframes shine {
+            0% { background-position: 300% 0; }
+            100% { background-position: -300% 0; }
+        }
+
         p {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 2rem;
+            font-size: 1.3rem;
+            line-height: 2;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1.5px;
         }
+
         .tip {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-top: 2rem;
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 1rem;
+            color: #f3e5f5;
         }
-        /* 爱心样式 */
+
         .heart {
             position: absolute;
             width: 20px;
             height: 20px;
-            background: #ff416c;
+            background: linear-gradient(45deg, #6a1b9a, #e91e63);
             transform: rotate(45deg);
-            animation: float 3s ease-in-out infinite;
-            opacity: 0.8;
-            z-index: 5;
+            animation: float 4s ease-in-out infinite;
+            opacity: 0.85;
+            z-index: 10;
+            border-radius: 2px;
+            transition: transform 0.3s ease;
         }
-        /* 爱心的左右半圆 */
+
         .heart::before, .heart::after {
             content: '';
             position: absolute;
             width: 20px;
             height: 20px;
-            background: #ff416c;
+            background: linear-gradient(45deg, #6a1b9a, #e91e63);
             border-radius: 50%;
         }
+
         .heart::before {
             top: -10px;
             left: 0;
         }
+
         .heart::after {
             top: 0;
             left: -10px;
+            content: '悦';
+            font-size: 8px;
+            color: #fff;
+            position: absolute;
+            top: 2px;
+            left: -8px;
+            transform: rotate(-45deg);
+            z-index: 11;
+            background: transparent;
         }
-        /* 爱心漂浮动画 */
+
         @keyframes float {
             0% {
-                transform: rotate(45deg) translateY(0);
-                opacity: 0.8;
+                transform: rotate(45deg) translateY(0) translateX(0);
+                opacity: 0.85;
             }
             50% {
-                transform: rotate(45deg) translateY(-20px);
-                opacity: 0.5;
+                transform: rotate(45deg) translateY(-30px) translateX(10px);
+                opacity: 0.6;
             }
             100% {
-                transform: rotate(45deg) translateY(0);
-                opacity: 0.8;
+                transform: rotate(45deg) translateY(0) translateX(0);
+                opacity: 0.85;
             }
+        }
+
+        .heart:active {
+            transform: rotate(45deg) scale(1.5);
+            opacity: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: starTwinkle 4s ease infinite;
+            z-index: 5;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .heart.big {
+            width: 40px;
+            height: 40px;
+            animation-duration: 6s;
+        }
+        .heart.big::before, .heart.big::after {
+            width: 40px;
+            height: 40px;
+        }
+        .heart.big::after {
+            font-size: 16px;
+            top: 8px;
+            left: -16px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>情人节快乐 ❤️</h1>
-        <p>愿星光落在你眼底，美好绕在你身边<br>往后余生，皆是浪漫</p>
-        <div class="tip">点击屏幕，解锁更多浪漫～</div>
+        <!-- 新增：图片展示区域 -->
+        <div class="img-box">
+            <!-- 替换下面的链接为你的图片地址 -->
+            <img src="你的图片链接" alt="胡悦女士的专属浪漫">
+        </div>
+        
+        <h1>致亲爱的 <span class="name">胡悦女士</span> ❤️</h1>
+        <p>情人节快乐<br>星河滚烫，你是人间理想<br>偏爱与温柔，皆为你专属</p>
+        <div class="tip">点击屏幕，解锁专属浪漫～</div>
     </div>
 
     <script>
-        // 点击屏幕生成爱心的函数
         function createHeart(e) {
-            // 获取点击位置
-            const x = e.clientX;
-            const y = e.clientY;
+            const x = e.clientX || e.detail.x;
+            const y = e.clientY || e.detail.y;
             
-            // 创建爱心元素
             const heart = document.createElement('div');
             heart.classList.add('heart');
             
-            // 定位爱心到点击位置
             heart.style.left = x - 10 + 'px';
             heart.style.top = y - 10 + 'px';
             
-            // 随机大小和动画时长，增加层次感
-            const size = Math.random() * 10 + 15;
+            const size = Math.random() * 12 + 12;
             heart.style.width = size + 'px';
             heart.style.height = size + 'px';
-            heart.style.animationDuration = Math.random() * 2 + 2 + 's';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
             
-            // 随机颜色深浅
-            const opacity = Math.random() * 0.5 + 0.5;
+            const opacity = Math.random() * 0.4 + 0.6;
             heart.style.opacity = opacity;
             
-            // 随机偏移方向
-            heart.style.transform = `rotate(45deg) translateX(${Math.random() * 40 - 20}px)`;
+            heart.style.transform = `rotate(45deg) translateX(${Math.random() * 50 - 25}px)`;
+
+            if (Math.random() < 0.1) {
+                heart.classList.add('big');
+            }
             
-            // 添加到页面
             document.body.appendChild(heart);
             
-            // 3秒后移除爱心，避免页面卡顿
             setTimeout(() => {
-                heart.remove();
-            }, 3000);
+                heart.style.opacity = 0;
+                heart.style.transition = 'opacity 0.8s ease';
+                setTimeout(() => heart.remove(), 800);
+            }, 4000);
         }
 
-        // 监听屏幕点击事件
-        document.addEventListener('click', createHeart);
+        function createStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * window.innerWidth + 'px';
+            star.style.top = Math.random() * window.innerHeight + 'px';
+            star.style.width = Math.random() * 3 + 1 + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDuration = Math.random() * 5 + 3 + 's';
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 8000);
+        }
 
-        // 自动生成一些爱心，增强初始效果
+        document.addEventListener('click', createHeart);
+        document.addEventListener('touchstart', createHeart);
+
         setInterval(() => {
             const randomX = Math.random() * window.innerWidth;
             const randomY = Math.random() * window.innerHeight;
-            // 模拟点击事件生成爱心
-            createHeart({clientX: randomX, clientY: randomY});
-        }, 500);
+            createHeart({detail: {x: randomX, y: randomY}});
+        }, 600);
+
+        setInterval(createStar, 300);
+
+        window.onload = function() {
+            for (let i = 0; i < 50; i++) {
+                createStar();
+            }
+        }
     </script>
 </body>
 </html>
