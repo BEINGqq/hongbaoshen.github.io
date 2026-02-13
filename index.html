@@ -44,30 +44,26 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* 新增：图片容器样式 */
         .img-box {
             width: 200px;
             height: 200px;
             margin: 0 auto 1.5rem;
-            border-radius: 50%; /* 圆形图片，更浪漫 */
+            border-radius: 50%;
             overflow: hidden;
             border: 4px solid #fff;
             box-shadow: 0 0 20px rgba(255,255,255,0.5);
-            /* 图片轻微旋转动画 */
             animation: imgRotate 8s ease-in-out infinite;
         }
 
-        /* 图片旋转动画（缓慢柔和） */
         @keyframes imgRotate {
             0%, 100% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
         }
 
-        /* 图片自适应 */
         .img-box img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 保证图片不变形 */
+            object-fit: cover;
         }
 
         h1 {
@@ -92,11 +88,20 @@
             100% { background-position: -300% 0; }
         }
 
-        p {
-            font-size: 1.3rem;
-            line-height: 2;
-            margin-bottom: 2.5rem;
-            letter-spacing: 1.5px;
+        /* 诗句显示区域 - 优化排版更适配诗句 */
+        .poem {
+            font-size: 1.6rem;
+            line-height: 2.2;
+            margin: 2rem 0;
+            letter-spacing: 2px;
+            min-height: 70px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            font-weight: 500;
+        }
+
+        .poem.show {
+            opacity: 1;
         }
 
         .tip {
@@ -117,26 +122,32 @@
             z-index: 10;
             border-radius: 2px;
             transition: transform 0.3s ease;
+            position: relative;
         }
 
-        .heart::before, .heart::after {
+        .heart::before {
             content: '';
             position: absolute;
             width: 20px;
             height: 20px;
             background: linear-gradient(45deg, #6a1b9a, #e91e63);
             border-radius: 50%;
-        }
-
-        .heart::before {
             top: -10px;
             left: 0;
         }
 
         .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #6a1b9a, #e91e63);
+            border-radius: 50%;
             top: 0;
             left: -10px;
-            content: '悦';
+        }
+
+        .heart .yue-text {
             font-size: 8px;
             color: #fff;
             position: absolute;
@@ -144,7 +155,7 @@
             left: -8px;
             transform: rotate(-45deg);
             z-index: 11;
-            background: transparent;
+            pointer-events: none;
         }
 
         @keyframes float {
@@ -192,7 +203,7 @@
             width: 40px;
             height: 40px;
         }
-        .heart.big::after {
+        .heart.big .yue-text {
             font-size: 16px;
             top: 8px;
             left: -16px;
@@ -201,18 +212,54 @@
 </head>
 <body>
     <div class="container">
-        <!-- 新增：图片展示区域 -->
         <div class="img-box">
-            <!-- 替换下面的链接为你的图片地址 -->
-            <img src="你的图片链接" alt="胡悦女士的专属浪漫">
+            <img src="微信图片_20260213090846_54_119.jpg" alt="胡悦女士的专属浪漫">
         </div>
         
         <h1>致亲爱的 <span class="name">胡悦女士</span> ❤️</h1>
-        <p>情人节快乐<br>星河滚烫，你是人间理想<br>偏爱与温柔，皆为你专属</p>
-        <div class="tip">点击屏幕，解锁专属浪漫～</div>
+        <div class="poem" id="poem"></div>
+        <div class="tip">点击屏幕，解锁专属的温柔～</div>
     </div>
 
     <script>
+        // 替换为诗意哄她的文案（无对不起，含热水器/装修/晾衣杆/挂钩）
+        const poems = [
+            "热水器温可重调，莫教心事起微潮",
+            "装修琐事惹尘嚣，愿随你意把眉挑",
+            "阳台晾杆凭你定，不与卿争半分情",
+            "墙间挂钩任君摆，只盼欢颜入帘来",
+            "琐语轻争皆是过，只惜卿容添愁色",
+            "凡尘小事何须论，你展笑颜胜千春",
+            "水暖由我亲手调，凡事与卿细商讨",
+            "晾杆挂钩皆随你，偏爱此间有你依",
+            "装修繁冗不辞累，怎忍娇嗔惹你泪",
+            "我性偏急欠思量，愿予温柔绕身旁",
+            "柴米油盐皆听你，余生只愿宠着你",
+            "晾衣装修皆是家，有你方知岁月佳",
+            "小忿何须红颜面，余生软语伴卿前",
+            "莫蹙蛾眉莫生嗔，我以温言慰你心",
+            "凡事皆随卿所愿，只愿朝夕皆欢颜"
+        ];
+
+        let currentPoemIndex = 0;
+        const poemElement = document.getElementById('poem');
+
+        // 核心：每次点击仅显示下一句诗句（无多余逻辑）
+        function showNextPoem() {
+            if (currentPoemIndex < poems.length) {
+                // 清空原有内容，淡入新诗句
+                poemElement.textContent = poems[currentPoemIndex];
+                poemElement.classList.remove('show');
+                void poemElement.offsetWidth; // 触发重排，保证动画生效
+                poemElement.classList.add('show');
+                currentPoemIndex++;
+            } else {
+                // 循环到第一句
+                currentPoemIndex = 0;
+                showNextPoem();
+            }
+        }
+
         function createHeart(e) {
             const x = e.clientX || e.detail.x;
             const y = e.clientY || e.detail.y;
@@ -236,6 +283,11 @@
             if (Math.random() < 0.1) {
                 heart.classList.add('big');
             }
+
+            const yueText = document.createElement('span');
+            yueText.classList.add('yue-text');
+            yueText.textContent = '悦';
+            heart.appendChild(yueText);
             
             document.body.appendChild(heart);
             
@@ -258,21 +310,25 @@
             setTimeout(() => star.remove(), 8000);
         }
 
-        document.addEventListener('click', createHeart);
-        document.addEventListener('touchstart', createHeart);
+        // 点击事件：先显示诗句，再生成爱心（逻辑更贴合“点击出诗句”核心需求）
+        function handleClick(e) {
+            showNextPoem(); // 优先显示诗句
+            createHeart(e); // 同步生成爱心
+        }
 
-        setInterval(() => {
-            const randomX = Math.random() * window.innerWidth;
-            const randomY = Math.random() * window.innerHeight;
-            createHeart({detail: {x: randomX, y: randomY}});
-        }, 600);
+        // 仅绑定点击事件触发诗句+爱心，移除自动生成爱心的定时器（避免干扰）
+        document.addEventListener('click', handleClick);
+        document.addEventListener('touchstart', handleClick);
 
+        // 保留星星自动生成，增加氛围感
         setInterval(createStar, 300);
 
         window.onload = function() {
             for (let i = 0; i < 50; i++) {
                 createStar();
             }
+            // 页面加载后默认显示第一句诗
+            showNextPoem();
         }
     </script>
 </body>
