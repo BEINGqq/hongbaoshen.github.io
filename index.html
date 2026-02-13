@@ -12,7 +12,11 @@
         }
         body {
             height: 100vh;
-            background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 30%, #e040fb 70%, #ba68c8 100%);
+            background: linear-gradient(135deg, rgba(123,31,162,0.8), rgba(156,39,176,0.8), rgba(224,64,251,0.8), rgba(186,104,200,0.8)), 
+                        url('微信图片_20260213090846_54_119.jpg') center center no-repeat;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
             overflow: hidden;
             font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
             display: flex;
@@ -21,15 +25,7 @@
             align-items: center;
             color: #fff;
             text-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            background-size: 200% 200%;
-            animation: bgMove 10s ease infinite;
             position: relative;
-        }
-
-        @keyframes bgMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         .container {
@@ -88,7 +84,6 @@
             100% { background-position: -300% 0; }
         }
 
-        /* 诗句显示区域 - 优化排版更适配诗句 */
         .poem {
             font-size: 1.6rem;
             line-height: 2.2;
@@ -111,6 +106,7 @@
             color: #f3e5f5;
         }
 
+        /* 普通爱心样式 */
         .heart {
             position: absolute;
             width: 20px;
@@ -178,6 +174,63 @@
             opacity: 1;
         }
 
+        /* 彩蛋：超大紫色爱心样式 */
+        .big-purple-heart {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #7b1fa2, #9c27b0, #ba68c8);
+            transform: rotate(45deg) scale(0); /* 初始缩放为0，准备弹出 */
+            animation: bigHeartPop 3s ease-in-out forwards, bigHeartFloat 6s ease-in-out infinite 1s;
+            opacity: 0.95;
+            z-index: 99; /* 层级最高，醒目 */
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(156,39,176,0.8), 0 0 100px rgba(224,64,251,0.5);
+            position: relative;
+        }
+
+        .big-purple-heart::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #7b1fa2, #9c27b0, #ba68c8);
+            border-radius: 50%;
+            top: -100px;
+            left: 0;
+        }
+
+        .big-purple-heart::after {
+            content: '悦❤️你开心'; /* 专属告白，可修改 */
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #7b1fa2, #9c27b0, #ba68c8);
+            border-radius: 50%;
+            top: 0;
+            left: -100px;
+            font-size: 24px;
+            color: #fff;
+            text-align: center;
+            line-height: 200px;
+            transform: rotate(-45deg);
+            z-index: 100;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        /* 超大爱心弹出动画 */
+        @keyframes bigHeartPop {
+            0% { transform: rotate(45deg) scale(0); opacity: 0; }
+            50% { transform: rotate(45deg) scale(1.2); opacity: 1; }
+            100% { transform: rotate(45deg) scale(1); opacity: 0.95; }
+        }
+
+        /* 超大爱心漂浮动画 */
+        @keyframes bigHeartFloat {
+            0%, 100% { transform: rotate(45deg) translateY(0) translateX(0); }
+            50% { transform: rotate(45deg) translateY(-20px) translateX(10px); }
+        }
+
         .star {
             position: absolute;
             width: 2px;
@@ -222,7 +275,55 @@
     </div>
 
     <script>
-        // 替换为诗意哄她的文案（无对不起，含热水器/装修/晾衣杆/挂钩）
+        // 背景图片数组
+        const bgImages = [
+            "微信图片_20260213090846_54_119.jpg",
+            "微信图片_20260213093924_55_119.jpg",
+            "微信图片_20260213093925_56_119.jpg",
+            "微信图片_20260213093926_57_119.jpg",
+            "微信图片_20260213093927_58_119.jpg",
+            "微信图片_20260213093928_59_119.jpg",
+            "微信图片_20260213093929_60_119.jpg",
+            "微信图片_20260213093930_61_119.jpg"
+        ];
+        let currentBgIndex = 0;
+        const bodyElement = document.body;
+
+        // 彩蛋：点击次数计数
+        let clickCount = 0;
+        const EGG_TRIGGER_COUNT = 10; // 点击10次触发彩蛋
+
+        function switchBackground() {
+            if (currentBgIndex < bgImages.length) {
+                bodyElement.style.background = `linear-gradient(135deg, rgba(123,31,162,0.8), rgba(156,39,176,0.8), rgba(224,64,251,0.8), rgba(186,104,200,0.8)), 
+                                                url('${bgImages[currentBgIndex]}') center center no-repeat`;
+                bodyElement.style.backgroundSize = "cover";
+                currentBgIndex++;
+            } else {
+                currentBgIndex = 0;
+                switchBackground();
+            }
+        }
+
+        // 生成超大紫色爱心彩蛋
+        function createBigPurpleHeart() {
+            const bigHeart = document.createElement('div');
+            bigHeart.classList.add('big-purple-heart');
+            
+            // 定位在屏幕中央
+            bigHeart.style.left = (window.innerWidth / 2 - 100) + 'px';
+            bigHeart.style.top = (window.innerHeight / 2 - 100) + 'px';
+            
+            document.body.appendChild(bigHeart);
+            
+            // 10秒后慢慢消失
+            setTimeout(() => {
+                bigHeart.style.opacity = 0;
+                bigHeart.style.transition = 'opacity 2s ease';
+                setTimeout(() => bigHeart.remove(), 2000);
+            }, 10000);
+        }
+
         const poems = [
             "热水器温可重调，莫教心事起微潮",
             "装修琐事惹尘嚣，愿随你意把眉挑",
@@ -244,17 +345,14 @@
         let currentPoemIndex = 0;
         const poemElement = document.getElementById('poem');
 
-        // 核心：每次点击仅显示下一句诗句（无多余逻辑）
         function showNextPoem() {
             if (currentPoemIndex < poems.length) {
-                // 清空原有内容，淡入新诗句
                 poemElement.textContent = poems[currentPoemIndex];
                 poemElement.classList.remove('show');
-                void poemElement.offsetWidth; // 触发重排，保证动画生效
+                void poemElement.offsetWidth; 
                 poemElement.classList.add('show');
                 currentPoemIndex++;
             } else {
-                // 循环到第一句
                 currentPoemIndex = 0;
                 showNextPoem();
             }
@@ -310,25 +408,37 @@
             setTimeout(() => star.remove(), 8000);
         }
 
-        // 点击事件：先显示诗句，再生成爱心（逻辑更贴合“点击出诗句”核心需求）
+        // 核心点击逻辑：累加计数 + 触发彩蛋 + 原有功能
         function handleClick(e) {
-            showNextPoem(); // 优先显示诗句
-            createHeart(e); // 同步生成爱心
+            // 1. 累加点击次数
+            clickCount++;
+            
+            // 2. 点击10次触发超大紫心彩蛋
+            if (clickCount === EGG_TRIGGER_COUNT) {
+                createBigPurpleHeart();
+                // 触发后重置计数（可选：也可以注释掉，让每10次都触发）
+                clickCount = 0;
+            }
+            
+            // 3. 原有功能：切换背景 + 切换诗句 + 生成普通爱心
+            switchBackground();
+            showNextPoem();
+            createHeart(e);
         }
 
-        // 仅绑定点击事件触发诗句+爱心，移除自动生成爱心的定时器（避免干扰）
         document.addEventListener('click', handleClick);
         document.addEventListener('touchstart', handleClick);
 
-        // 保留星星自动生成，增加氛围感
         setInterval(createStar, 300);
 
         window.onload = function() {
             for (let i = 0; i < 50; i++) {
                 createStar();
             }
-            // 页面加载后默认显示第一句诗
             showNextPoem();
+            if (bgImages.length > 0) {
+                switchBackground();
+            }
         }
     </script>
 </body>
