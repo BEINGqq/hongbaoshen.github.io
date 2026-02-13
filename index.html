@@ -2,1105 +2,684 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 强化移动端视口适配 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>Grand Luxury Tree - 奢华交互版</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>致胡悦女士 · 专属浪漫 ❤️</title>
     <style>
-        /* 引入衬线字体，营造高级感 */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap');
-
-        /* 全局基础设置 */
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            background-color: #020205; 
-            font-family: 'Cinzel', serif; 
-            touch-action: none; /* 禁止默认触摸行为 */
-            -webkit-user-select: none; 
-            user-select: none; 
-            -webkit-touch-callout: none; /* 禁止iOS长按菜单 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        /* WebGL 容器 - 适配手机屏幕 */
-        #canvas-container { 
-            width: 100vw; 
-            height: 100vh; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            z-index: 1; 
-        }
-        
-        /* UI 交互层 (允许点击穿透) */
-        #ui-layer {
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            z-index: 10; 
-            pointer-events: none; 
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 100%);
-        }
-
-        /* Loading 动画 - 适配手机居中 */
-        #loader {
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: #000; 
-            z-index: 100;
-            display: flex; 
-            align-items: center; 
+        body {
+            height: 100vh;
+            background: url('微信图片_20260213090846_54_119.jpg') center center no-repeat;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease;
+            overflow: hidden;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .spinner {
-            width: 40px; 
-            height: 40px; 
-            border: 2px solid rgba(212, 175, 55, 0.1); 
-            border-top: 2px solid #d4af37; 
-            border-radius: 50%; 
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        /* 右上角控制按钮组 - 适配手机触摸 */
-        #top-right-controls {
-            position: absolute; 
-            top: 20px; 
-            right: 20px;
-            z-index: 30; 
-            display: flex; 
-            flex-direction: column; /* 纵向排列 */
-            gap: 15px; /* 按钮间距 */
-            pointer-events: auto;
-        }
-
-        /* 按钮样式 - 加大触摸区域，适配手机 */
-        .control-btn {
-            background: rgba(10, 10, 10, 0.6);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            color: #d4af37; 
-            width: 120px; /* 加宽按钮 */
-            height: auto;
-            padding: 15px 0; /* 加大内边距，提升触摸体验 */
-            border-radius: 12px; /* 圆角矩形 */
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            font-family: 'Cinzel', serif; 
-            font-size: 16px; /* 加大字体 */
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
-            outline: none; 
-            -webkit-tap-highlight-color: transparent; /* 移除iOS点击高亮 */
-        }
-        .control-btn:hover, .control-btn:active { /* 适配触摸反馈 */
-            background: rgba(212, 175, 55, 0.2);
-            border-color: rgba(212, 175, 55, 0.8);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-            transform: scale(1.05); 
+            align-items: center;
             color: #fff;
+            text-shadow: 0 3px 8px rgba(0,0,0,0.7);
+            position: relative;
         }
 
-        /* 隐藏的文件输入框 */
-        #file-input { display: none; }
-        
-        /* 摄像头预览窗 - 适配手机屏幕 */
-        #webcam-wrapper {
-            position: absolute; 
-            bottom: 20px; 
-            right: 20px; 
-            opacity: 0; 
-            pointer-events: none;
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            border-radius: 8px; /* 加大圆角，适配手机审美 */
-            background: #000; 
-            z-index: 50;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            /* 手机端默认尺寸 */
-            width: 120px;
-            height: 160px;
+        .container {
+            text-align: center;
+            z-index: 20;
+            animation: textFloat 4s infinite;
+            padding: 0 20px;
+        }
+        @keyframes textFloat {
+            0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}
         }
 
-        #webcam { display: none; }
-        
-        #webcam-preview {
-            display: block; 
-            width: 100%; 
-            height: 100%; 
-            transform: scaleX(-1); /* 镜像翻转 */
-        }
-        
-        /* 下载按钮 - 适配手机 */
-        .download-btn-container {
-            position: fixed; 
-            bottom: 20px; 
-            left: 50%;
-            transform: translateX(-50%); 
-            z-index: 1000;
-        }
-        .download-btn {
-            background-color: #2196F3; 
-            color: white;
-            padding: 12px 24px; /* 加大触摸区域 */
-            border: none; 
-            border-radius: 8px;
-            cursor: pointer; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            position: relative; 
-            padding-right: 40px;
-            font-size: 16px; /* 加大字体 */
-        }
-        .download-btn:hover, .download-btn:active { 
-            background-color: #1976D2; 
-        }
-        .close-btn {
-            background-color: #9e9e9e; 
-            color: white;
-            width: 24px; 
-            height: 24px; 
-            border: none; 
+        .img-box {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
             border-radius: 50%;
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            position: absolute; 
-            right: 8px; 
-            top: 50%; 
-            transform: translateY(-50%);
-            font-size: 16px; 
-            line-height: 1;
+            overflow: hidden;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
         }
-        .hidden { display: none !important; }
+        .img-box img {
+            width:100%;height:100%;object-fit:cover;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+        .name {
+            text-decoration: underline;
+            text-underline-offset: 6px;
+            background: linear-gradient(90deg, #fce4ec, #fff, #f3e5f5);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: shine 4s infinite;
+        }
+        @keyframes shine {
+            0%{background-position:300% 0;}100%{background-position:-300% 0;}
+        }
+
+        .poem {
+            font-size: 1.6rem;
+            line-height: 2.2;
+            margin: 2rem 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .poem.show {
+            opacity:1;
+        }
+
+        .tip {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .game-btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            border: none;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+        .game-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        #gameCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            display: none;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #6a1b9a, #e91e63);
+            transform: rotate(45deg);
+            animation: float 4s infinite;
+            opacity: 0.85;
+            z-index: 10;
+        }
+        .heart::before,.heart::after {
+            content:'';position:absolute;width:20px;height:20px;
+            background:linear-gradient(45deg, #6a1b9a, #e91e63);
+            border-radius:50%;
+        }
+        .heart::before{top:-10px;left:0;}
+        .heart::after{top:0;left:-10px;}
+        .heart .yue-text{
+            font-size:8px;color:#fff;position:absolute;top:2px;left:-8px;transform:rotate(-45deg);
+        }
+        @keyframes float{
+            0%{transform:rotate(45deg) translateY(0);opacity:0.85;}
+            50%{transform:rotate(45deg) translateY(-30px);opacity:0.6;}
+            100%{transform:rotate(45deg) translateY(0);opacity:0.85;}
+        }
+
+        .big-purple-heart {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #7b1fa2, #9c27b0);
+            transform: rotate(45deg) scale(0);
+            animation: bigPop 3s forwards, bigFloat 6s infinite 1s;
+            opacity: 0.95;
+            z-index: 9999;
+            border-radius:10px;
+        }
+        .big-purple-heart::before{
+            content:'';position:absolute;width:200px;height:200px;
+            background:linear-gradient(45deg, #7b1fa2, #9c27b0);
+            border-radius:50%;top:-100px;left:0;
+        }
+        .big-purple-heart::after{
+            content:'悦❤️天天开心';
+            position:absolute;width:200px;height:200px;
+            background:linear-gradient(45deg, #7b1fa2, #9c27b0);
+            border-radius:50%;top:0;left:-100px;
+            font-size:24px;color:#fff;text-align:center;line-height:200px;
+            transform:rotate(-45deg);
+        }
+        @keyframes bigPop{
+            0%{transform:rotate(45deg) scale(0);opacity:0;}
+            50%{transform:rotate(45deg) scale(1.2);opacity:1;}
+            100%{transform:rotate(45deg) scale(1);opacity:0.95;}
+        }
+        @keyframes bigFloat{
+            0%,100%{transform:rotate(45deg) translateY(0);}
+            50%{transform:rotate(45deg) translateY(-20px);}
+        }
+
+        .firework{
+            position:absolute;width:8px;height:8px;border-radius:50%;
+            z-index:99999;animation:fire 1.2s ease-out forwards;
+        }
+        @keyframes fire{
+            0%{transform:scale(1);opacity:1;}
+            50%{transform:scale(5);opacity:0.8;}
+            100%{transform:scale(15);opacity:0;}
+        }
     </style>
-
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-                "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/+esm"
-            }
-        }
-    </script>
 </head>
-
 <body>
-    <div id="loader"><div class="spinner"></div></div>
 
-    <div id="canvas-container"></div>
+<canvas id="gameCanvas"></canvas>
 
-    <div id="ui-layer">
-        <div id="top-right-controls">
-            <button id="btn-add-photo" class="control-btn">上传照片</button>
-            <button id="btn-fullscreen" class="control-btn">全屏显示</button>
-        </div>
-        <input type="file" id="file-input" multiple accept="image/*">
+<div class="container">
+    <div class="img-box">
+        <img src="微信图片_20260213090846_54_119.jpg" alt="胡悦">
     </div>
+    <h1>致亲爱的 <span class="name">胡悦女士</span> ❤️</h1>
+    <div class="poem" id="poem"></div>
+    <div class="tip">点击屏幕，解锁温柔～</div>
+    <button class="game-btn" id="startBtn">开始爱心小游戏</button>
+</div>
 
-    <div id="webcam-wrapper">
-        <video id="webcam" autoplay playsinline webkit-playsinline></video>
-        <canvas id="webcam-preview"></canvas>
-    </div>
-    
-    <audio id="bg-music" loop crossorigin="anonymous">
-        <source src="https://actions.google.com/sounds/v1/holiday/we_wish_you_a_merry_christmas_instrumental.ogg" type="audio/ogg">
-    </audio>
+<script>
+    const bgImages = [
+        "微信图片_20260213090846_54_119.jpg","微信图片_20260213093924_55_119.jpg",
+        "微信图片_20260213093925_56_119.jpg","微信图片_20260213093926_57_119.jpg",
+        "微信图片_20260213093927_58_119.jpg","微信图片_20260213093928_59_119.jpg",
+        "微信图片_20260213093929_60_119.jpg","微信图片_20260213093930_61_119.jpg"
+    ];
+    let bgIndex=0;
+    const body=document.body;
+    const poemEl=document.getElementById('poem');
+    const startBtn=document.getElementById('startBtn');
+    const canvas=document.getElementById('gameCanvas');
+    const ctx=canvas.getContext('2d');
 
-    <div class="download-btn-container" id="downloadContainer">
-        <button class="download-btn" onclick="downloadHTML()">
-            下载HTML文件
-            <button class="close-btn" onclick="closeDownloadBtn(event)" title="关闭">×</button>
-        </button>
-    </div>
+    const poems = [
+        "热水器温可重调，愿你日日展眉梢","装修琐事惹尘嚣，有我相伴乐逍遥",
+        "阳台晾杆凭你定，只盼笑意满眉梢","墙间挂钩任君摆，日日欢喜入帘来",
+        "琐语轻争皆是过，只愿你笑靥如花","凡尘小事何须论，你展笑颜胜千春",
+        "水暖由我亲手调，伴你开怀乐陶陶","晾杆挂钩皆随你，偏爱此间有你依",
+        "装修繁冗不辞累，只为博你笑一回","我性偏急欠思量，愿予温柔暖心房",
+        "柴米油盐皆听你，余生欢喜皆予你","晾衣装修皆是家，有你方知岁月佳",
+        "小忿何须挂眉间，余生欢喜伴身边","莫蹙蛾眉莫烦忧，我以温柔解你愁",
+        "凡事皆随卿所愿，只愿朝夕皆欢颜"
+    ];
+    let poemIndex=0;
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-        import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'; 
-        import { FilesetResolver, HandLandmarker, DrawingUtils } from '@mediapipe/tasks-vision';
+    let clickCount=0;
+    let bigHeartEnabled=true;
 
-        // ==========================================
-        // 1. CONFIG: 全局配置参数 (移动端性能优化)
-        // ==========================================
-        const CONFIG = {
-            textPoints: [],
-            colors: {
-                bg: 0x020202, 
-                blue: 0x0066ff,   // 冰蓝色
-                cyan: 0x00ffff,   // 青色/亮蓝
-                white: 0xffffff,
-                silver: 0x8899aa  // 银灰色
-            },
-            particles: {
-                count: 1200,      // 移动端减少粒子数 (原2800)
-                dustCount: 800,   // 移动端减少星尘数 (原1500)
-                treeHeight: 28,   
-                treeRadius: 9     
-            },
-            camera: {
-                z: 55 
-            },
-            gestures: {
-                pinchThreshold: 0.08, // 移动端放宽捏合阈值
-                palmOpenThreshold: 0.4, // 移动端放宽手掌判定阈值
-                sensitivity: 4.0 // 降低移动端手势灵敏度，避免过度旋转
-            },
-            // 移动端触摸控制参数
-            touch: {
-                rotateSensitivity: 0.005, // 触摸旋转灵敏度
-                scaleSensitivity: 0.01,   // 触摸缩放灵敏度
-                lastTouch: null,          // 上一次触摸位置
-                isPinching: false,        // 是否正在捏合
-                lastPinchDistance: 0      // 上一次捏合距离
-            }
-        };
+    function switchBg(){
+        body.style.background=`url('${bgImages[bgIndex%bgImages.length]}') center/cover no-repeat`;
+        bgIndex++;
+    }
 
-        // ==========================================
-        // 2. STATE: 运行时状态管理
-        // ==========================================
-        const STATE = {
-            mode: 'TREE', 
-            focusTarget: null, 
-            currentPhotoIndex: -1,
-            
-            hand: { detected: false, x: 0, y: 0 },
-            mouse: { x: 0, y: 0 },
-            
-            rotation: { x: 0, y: 0 },
-            spinVel: { x: 0, y: 0 }, 
-            time: 0,
-            
-            wasPointing: false, 
-            palmCenter: { x: 0.5, y: 0.5 }, 
-            hasPalmCenter: false,
-            starMesh: null 
-        };
+    function nextPoem(){
+        poemEl.textContent=poems[poemIndex%poems.length];
+        poemEl.classList.remove('show');
+        void poemEl.offsetWidth;
+        poemEl.classList.add('show');
+        poemIndex++;
+    }
 
-        // 全局变量
-        let scene, camera, renderer, composer;
-        let mainGroup, starGroup, bgGroup, photoMeshGroup;
-        let clock = new THREE.Clock();
-        let particleSystem = []; 
-        let handLandmarker, video, drawingUtils, canvasCtx;
-        let caneTexture; 
+    function createHeart(x,y){
+        const h=document.createElement('div');
+        h.className='heart';
+        h.style.left=x-10+'px';
+        h.style.top=y-10+'px';
+        const t=document.createElement('span');
+        t.className='yue-text';
+        t.textContent='悦';
+        h.appendChild(t);
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),4000);
+    }
 
-        // ==========================================
-        // 3. 初始化入口
-        // ==========================================
-        async function init() {
-            CONFIG.textPoints = generateTextPoints("许佩佩");
-            initThree();          
-            setupEnvironment();   
-            setupLights();        
-            createTextures();     
-            createGalaxyBackground(); 
-            createParticles();    
-            setupPostProcessing();
-            setupEvents();        // 新增移动端触摸事件
-            
-            // 初始化 AI 模型 (异步，移动端降级处理)
-            try {
-                await initMediaPipe();
-            } catch (e) {
-                console.warn("移动端手势识别初始化失败，仅启用触摸控制:", e);
-            }
+    function bigHeart(){
+        const bh=document.createElement('div');
+        bh.className='big-purple-heart';
+        bh.style.left=window.innerWidth/2-100+'px';
+        bh.style.top=window.innerHeight/2-100+'px';
+        document.body.appendChild(bh);
+        setTimeout(()=>bh.remove(),10000);
+    }
 
-            // 移除 Loading 遮罩
-            const loader = document.getElementById('loader');
-            loader.style.opacity = 0;
-            setTimeout(() => loader.remove(), 1200);
-
-            animate(); 
+    document.addEventListener('click',(e)=>{
+        if(canvas.style.display==='block')return;
+        clickCount++;
+        if(bigHeartEnabled && clickCount===10){
+            bigHeart();
+            clickCount=0;
         }
+        switchBg();
+        nextPoem();
+        createHeart(e.clientX,e.clientY);
+    });
 
-        // ==========================================
-        // 4. Three.js 核心设置 (移动端性能优化)
-        // ==========================================
-        function initThree() {
-            const container = document.getElementById('canvas-container');
-            
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(CONFIG.colors.bg);
-            scene.fog = new THREE.FogExp2(CONFIG.colors.bg, 0.012); 
+    // ====================== 工具：绘制再来一局 / 下一个游戏按钮 ======================
+    function drawEndButtons() {
+        // 再来一局
+        ctx.fillStyle = '#e91e63';
+        ctx.fillRect(canvas.width/2 - 170, canvas.height/2 + 60, 140, 50);
+        ctx.fillStyle = '#fff';
+        ctx.font = '22px Microsoft YaHei';
+        ctx.textAlign = 'center';
+        ctx.fillText('再来一局', canvas.width/2 - 100, canvas.height/2 + 92);
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-            camera.position.set(0, 0, CONFIG.camera.z); 
+        // 下一个游戏
+        ctx.fillStyle = '#9c27b0';
+        ctx.fillRect(canvas.width/2 + 30, canvas.height/2 + 60, 140, 50);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('下一个游戏', canvas.width/2 + 100, canvas.height/2 + 92);
+    }
 
-            // 移动端渲染器优化
-            renderer = new THREE.WebGLRenderer({ 
-                antialias: false, 
-                powerPreference: "low-power", // 移动端低功耗模式
-                stencil: false,
-                depth: true,
-                precision: "mediump" // 降低精度提升性能
-            });
-            // 适配手机屏幕分辨率 (降低像素比，提升帧率)
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2)); // 原1.5，移动端降为1.2
-            renderer.toneMapping = THREE.ACESFilmicToneMapping; 
-            renderer.toneMappingExposure = 0.8; // 降低曝光，减少GPU负载
-            renderer.autoClear = true;
-            renderer.setClearColor(CONFIG.colors.bg, 1);
-            container.appendChild(renderer.domElement);
-
-            // 分组管理
-            bgGroup = new THREE.Group();
-            scene.add(bgGroup);
-
-            mainGroup = new THREE.Group();
-            mainGroup.rotation.x = 0.1; 
-            scene.add(mainGroup);
-
-            starGroup = new THREE.Group();
-            mainGroup.add(starGroup);
-            
-            photoMeshGroup = new THREE.Group();
-            mainGroup.add(photoMeshGroup);
+    // 检测点击按钮
+    function checkButtonClick(mx, my, onRestart, onNext) {
+        // 再来一局
+        if (mx > canvas.width/2 - 170 && mx < canvas.width/2 - 30 &&
+            my > canvas.height/2 + 60 && my < canvas.height/2 + 110) {
+            onRestart();
         }
-
-        function setupEnvironment() {
-            const pmremGenerator = new THREE.PMREMGenerator(renderer);
-            pmremGenerator.compileEquirectangularShader();
-            scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-            pmremGenerator.dispose(); // 释放内存，移动端关键
+        // 下一个游戏
+        if (mx > canvas.width/2 + 30 && mx < canvas.width/2 + 170 &&
+            my > canvas.height/2 + 60 && my < canvas.height/2 + 110) {
+            onNext();
         }
+    }
 
-        function setupLights() {
-            const ambient = new THREE.AmbientLight(0xffffff, 0.15); // 降低环境光强度
-            scene.add(ambient);
+    // ======================================
+    // 游戏1：找爱心
+    // ======================================
+    function startFindHeart(){
+        bigHeartEnabled=false;
+        canvas.style.display='block';
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
 
-            const bottomLight = new THREE.PointLight(CONFIG.colors.blue, 2, 40); // 降低点光强度
-            bottomLight.position.set(0, -10, 10);
-            mainGroup.add(bottomLight);
+        let found=0;
+        const total=5;
+        const heartSize=30;
+        let hearts=[];
+        let gameEnd = false;
 
-            // 降低聚光灯强度，减少渲染负载
-            const spotMain = new THREE.SpotLight(0xaaddff, 500); // 原800
-            spotMain.position.set(40, 60, 40);
-            spotMain.angle = 0.4;
-            spotMain.penumbra = 0.5;
-            spotMain.decay = 2;
-            scene.add(spotMain);
-
-            const spotFill = new THREE.SpotLight(0x0044aa, 250); // 原400
-            spotFill.position.set(-40, 10, -30);
-            spotFill.lookAt(0,0,0);
-            scene.add(spotFill);
-        }
-
-        function setupPostProcessing() {
-            const renderScene = new RenderPass(scene, camera);
-            // 移动端降低辉光效果，提升性能
-            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.3, 0.7);
-            bloomPass.threshold = 0.8; 
-            bloomPass.strength = 0.4;  // 原0.5
-            bloomPass.radius = 0.2;    // 原0.3
-            
-            composer = new EffectComposer(renderer);
-            composer.addPass(renderScene);
-            composer.addPass(bloomPass);
-            // 移动端关闭抗锯齿后处理
-            composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
-        }
-
-        // ==========================================
-        // 5. 粒子与内容创建 (移动端简化)
-        // ==========================================
-        function generateTextPoints(text) {
-            const canvas = document.createElement('canvas');
-            const width = 800; // 原1000，移动端缩小画布
-            const height = 400; // 原500
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, width, height);
-            
-            ctx.font = 'bold 160px "Microsoft YaHei", "Heiti SC", sans-serif'; // 原200px
-            ctx.fillStyle = '#ffffff';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            const chars = text.split('');
-            const startX = width / 2 - ((chars.length - 1) * 100); // 原120
-            
-            chars.forEach((char, i) => {
-                const x = startX + i * 200; // 原240
-                ctx.fillText(char, x, height / 2);
-            });
-            
-            const imageData = ctx.getImageData(0, 0, width, height);
-            const data = imageData.data;
-            const points = [];
-            
-            const step = 6; // 原4，移动端加大采样步长，减少点数
-            for (let y = 0; y < height; y += step) {
-                for (let x = 0; x < width; x += step) {
-                    const alpha = data[(y * width + x) * 4]; 
-                    if (alpha > 128) {
-                        const px = (x - width / 2) * 0.1; 
-                        const py = -(y - height / 2) * 0.1; 
-                        points.push({x: px, y: py, z: 0});
-                    }
-                }
-            }
-            return points;
-        }
-
-        // 粒子类：移动端简化动画逻辑
-        class Particle {
-            constructor(mesh, type, isDust = false) {
-                this.mesh = mesh;
-                this.type = type;
-                this.isDust = isDust;
-                
-                this.posTree = new THREE.Vector3();    
-                this.posScatter = new THREE.Vector3(); 
-                
-                this.baseScale = mesh.scale.x; 
-                this.offset = Math.random() * 100; 
-                this.speed = 0.4 + Math.random() * 0.6; // 降低动画速度
-                
-                if (mesh.material && mesh.material.emissive) {
-                    this.baseEmissive = mesh.material.emissive.clone();
-                    this.hasEmissive = true;
-                }
-                
-                this.calculatePositions();
-            }
-
-            calculatePositions() {
-                const h = CONFIG.particles.treeHeight;
-                let t = Math.random(); 
-                
-                if (CONFIG.textPoints && CONFIG.textPoints.length > 0) {
-                     const p = CONFIG.textPoints[Math.floor(Math.random() * CONFIG.textPoints.length)];
-                     this.posTree.set(
-                        p.x + (Math.random()-0.5)*0.2, 
-                        p.y + (Math.random()-0.5)*0.2, 
-                        p.z + (Math.random()-0.5)*0.5
-                     );
-                     if (this.isDust) {
-                         this.posTree.add(new THREE.Vector3(
-                             (Math.random()-0.5)*3,
-                             (Math.random()-0.5)*3,
-                             (Math.random()-0.5)*2
-                         ));
-                     }
-                } else if (Math.random() > 0.7 && !this.isDust && this.type !== 'PHOTO') {
-                    const y = (t * h) - h/2;
-                    const rBase = CONFIG.particles.treeRadius * (1.0 - t);
-                    const angle = t * Math.PI * 2 * 6; 
-                    this.posTree.set(Math.cos(angle) * rBase, y, Math.sin(angle) * rBase);
-                } else {
-                    t = Math.pow(t, 0.8); 
-                    const y = (t * h) - h/2;
-                    let rMax = CONFIG.particles.treeRadius * (1.0 - t); 
-                    if (rMax < 0.5) rMax = 0.5;
-                    const angle = Math.random() * Math.PI * 2;
-                    const r = rMax * Math.sqrt(Math.random()); 
-                    this.posTree.set(Math.cos(angle) * r, y, Math.sin(angle) * r);
-                }
-
-                let rScatter = this.isDust ? (15 + Math.random()*25) : (10 + Math.random()*15);
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(2 * Math.random() - 1);
-                this.posScatter.set(
-                    rScatter * Math.sin(phi) * Math.cos(theta), 
-                    rScatter * Math.sin(phi) * Math.sin(theta), 
-                    rScatter * Math.cos(phi)
-                );
-            }
-
-            update(dt, time, mode, focusTargetMesh) {
-                let target = this.posTree;
-                let s = this.baseScale;
-                let lerpSpeed = 2.5; // 降低插值速度，减少计算量
-                
-                if (mode === 'SCATTER') {
-                    target = this.posScatter;
-                } 
-                else if (mode === 'FOCUS') {
-                    if (this.mesh === focusTargetMesh) {
-                        const invMatrix = new THREE.Matrix4().copy(mainGroup.matrixWorld).invert();
-                        const camPos = new THREE.Vector3(0, 0, CONFIG.camera.z - 15);
-                        target = camPos.applyMatrix4(invMatrix);
-                        lerpSpeed = 5.0; 
-                        this.mesh.lookAt(camera.position);
-                        s = this.baseScale * 4.0; // 原5.0，移动端缩小
-                    } else {
-                        target = this.posScatter;
-                        s = 0.01; 
-                    }
-                } 
-                else if (mode === 'METEOR') {
-                    target = this.posScatter; 
-                    if (!this.isDust) s = 0; 
-                }
-
-                const dest = target.clone();
-                if(mode === 'TREE') { 
-                    const noiseY = Math.sin(time * this.speed + this.offset) * 0.12; // 原0.15
-                    const noiseX = Math.cos(time * 0.5 * this.speed + this.offset) * 0.08; // 原0.1
-                    dest.y += noiseY; dest.x += noiseX; 
-                }
-
-                this.mesh.position.lerp(dest, lerpSpeed * dt);
-
-                if (this.hasEmissive && mode === 'TREE' && !this.isDust) {
-                    const blink = Math.sin(time * 1.8 + this.offset); // 原2，降低闪烁频率
-                    this.mesh.material.emissiveIntensity = blink > 0.5 ? (1.0 + (blink - 0.5) * 3) : 0.3; // 原4
-                }
-
-                if (mode !== 'FOCUS') {
-                     if (this.isDust) {
-                        s = this.baseScale * (0.5 + 0.5 * Math.sin(time * 2.5 + this.offset)); // 原3
-                    } else if (mode === 'SCATTER' && this.type === 'PHOTO') {
-                        s = this.baseScale * 2.0; // 原2.5
-                    }
-                }
-                
-                this.mesh.scale.lerp(new THREE.Vector3(s,s,s), 4*dt); // 原5
-            }
-        }
-
-        function createTextures() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 64; // 原128，移动端缩小纹理
-            canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,64,64);
-            ctx.fillStyle = '#aa0000'; ctx.beginPath();
-            for(let i=-64; i<128; i+=16) { // 原-128,256,32
-                ctx.moveTo(i, 0); ctx.lineTo(i+16, 64); ctx.lineTo(i+8, 64); ctx.lineTo(i-8, 0);
-            }
+        function drawHeart(x, y, size) {
+            ctx.fillStyle = '#ff4081';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x-size/2, y-size/2, x-size, y+size/4, x, y+size/2);
+            ctx.bezierCurveTo(x+size, y+size/4, x+size/2, y-size/2, x, y);
             ctx.fill();
-            caneTexture = new THREE.CanvasTexture(canvas);
-            caneTexture.colorSpace = THREE.SRGBColorSpace;
-            caneTexture.wrapS = THREE.RepeatWrapping; 
-            caneTexture.wrapT = THREE.RepeatWrapping;
-            caneTexture.repeat.set(3, 3);
+            ctx.shadowColor = '#ff4081';
+            ctx.shadowBlur = 15;
         }
 
-        function createGalaxyBackground() {
-            const geometry = new THREE.BufferGeometry();
-            const count = 1500; // 原3000，移动端减少背景粒子
-            const positions = new Float32Array(count * 3);
-            const sizes = new Float32Array(count);
-            const colors = new Float32Array(count * 3);
-            const c1 = new THREE.Color(0x0066ff); 
-            const c2 = new THREE.Color(0xaaccff); 
-            const c3 = new THREE.Color(0xffffff); 
-
-            for(let i=0; i<count; i++) {
-                const r = 60 + Math.random() * 250;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(2 * Math.random() - 1);
-                positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
-                positions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-                positions[i*3+2] = r * Math.cos(phi);
-                sizes[i] = Math.random() * 1.5; // 原2.0
-                let c = Math.random(); 
-                let finalC = c < 0.6 ? c2 : (c < 0.9 ? c1 : c3);
-                colors[i*3] = finalC.r; 
-                colors[i*3+1] = finalC.g; 
-                colors[i*3+2] = finalC.b;
-            }
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            
-            const material = new THREE.PointsMaterial({
-                size: 0.8, // 原1.0
-                transparent: true, 
-                opacity: 0.7, // 原0.8
-                vertexColors: true,
-                sizeAttenuation: true, 
-                blending: THREE.AdditiveBlending, 
-                depthWrite: false
-            });
-            bgGroup.add(new THREE.Points(geometry, material));
-        }
-
-        function createParticles() {
-            // 移动端简化几何体分段数
-            const sphereGeo = new THREE.SphereGeometry(0.5, 16, 16); // 原32,32
-            const boxGeo = new THREE.BoxGeometry(0.45, 0.45, 0.45); 
-            const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, -0.5, 0), new THREE.Vector3(0, 0.3, 0), new THREE.Vector3(0.1, 0.5, 0), new THREE.Vector3(0.3, 0.4, 0)]);
-            const candyGeo = new THREE.TubeGeometry(curve, 8, 0.08, 6, false); // 原16,8
-
-            // 材质简化
-            const blueMat = new THREE.MeshStandardMaterial({ 
-                color: CONFIG.colors.blue, 
-                metalness: 0.9, 
-                roughness: 0.1, 
-                envMapIntensity: 2.5, // 原3.0
-                emissive: 0x0033aa, 
-                emissiveIntensity: 0.7 // 原0.8
-            });
-            
-            const cyanMat = new THREE.MeshStandardMaterial({ 
-                color: CONFIG.colors.cyan, 
-                metalness: 0.6, 
-                roughness: 0.2, 
-                emissive: 0x00ffff, 
-                emissiveIntensity: 0.9 // 原1.0
-            });
-            
-            const whiteMat = new THREE.MeshStandardMaterial({ 
-                color: CONFIG.colors.white, 
-                metalness: 0.9, 
-                roughness: 0.1, 
-                emissive: 0xffffff, 
-                emissiveIntensity: 1.0 // 原1.2
-            });
-            
-            const iceMat = new THREE.MeshPhysicalMaterial({
-                color: 0xaaccff, 
-                metalness: 0.1, 
-                roughness: 0.0, 
-                transmission: 0.8, // 原0.9
-                thickness: 0.8 // 原1.0
-            });
-            
-            const dustGeo = new THREE.OctahedronGeometry(0.1, 0);
-            const dustMat = new THREE.MeshBasicMaterial({ color: 0xaaccff, blending: THREE.AdditiveBlending });
-
-            // 1. 生成主体装饰
-            for (let i = 0; i < CONFIG.particles.count; i++) {
-                const rand = Math.random(); 
-                let mesh, type;
-                
-                if (rand < 0.40) { mesh = new THREE.Mesh(sphereGeo, blueMat); type = 'BLUE_SPHERE'; } 
-                else if (rand < 0.70) { mesh = new THREE.Mesh(sphereGeo, cyanMat); type = 'CYAN_SPHERE'; } 
-                else if (rand < 0.85) { mesh = new THREE.Mesh(sphereGeo, whiteMat); type = 'WHITE_SPHERE'; }
-                else if (rand < 0.95) { mesh = new THREE.Mesh(boxGeo, iceMat); type = 'ICE_BOX'; } 
-                else { mesh = new THREE.Mesh(candyGeo, whiteMat); type = 'CANE'; }
-                
-                const s = 0.25 + Math.random() * 0.25; // 原0.3+0.3
-                mesh.scale.set(s,s,s);
-                mesh.rotation.set(Math.random()*6, Math.random()*6, Math.random()*6);
-                mainGroup.add(mesh);
-                particleSystem.push(new Particle(mesh, type, false));
-            }
-
-            // 2. 生成星尘
-            for(let i=0; i<CONFIG.particles.dustCount; i++) {
-                const mesh = new THREE.Mesh(dustGeo, dustMat);
-                mesh.scale.setScalar(0.4 + Math.random() * 0.6); // 原0.5+1
-                mainGroup.add(mesh);
-                particleSystem.push(new Particle(mesh, 'DUST', true));
-            }
-            
-            // 3. 树顶星星
-            createStarTopper();
-        }
-
-        function createStarTopper() {
-            const starGeo = new THREE.OctahedronGeometry(1.2, 0); // 原1.5
-            const starMat = new THREE.MeshStandardMaterial({ 
-                color: 0xffdd88, 
-                emissive: 0xffaa00, 
-                emissiveIntensity: 1.8, // 原2.0
-                metalness: 1.0, 
-                roughness: 0 
-            });
-            const star = new THREE.Mesh(starGeo, starMat);
-            star.position.set(0, CONFIG.particles.treeHeight/2 + 1.2, 0);
-            
-            const halo = new THREE.Mesh(
-                new THREE.PlaneGeometry(6, 6), // 原8,8
-                new THREE.MeshBasicMaterial({ 
-                    map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/sprites/glow.png'), 
-                    blending: THREE.AdditiveBlending, 
-                    depthWrite: false, 
-                    transparent: true, 
-                    opacity: 0.4, // 原0.5
-                    color: 0xffaa00 
-                })
-            );
-            star.add(halo);
-            starGroup.add(star);
-            STATE.starMesh = star;
-        }
-
-        // ==========================================
-        // 6. 照片上传与处理 (移动端适配)
-        // ==========================================
-        function addPhotoToScene(texture) {
-            const img = texture.image;
-            if (!img) return;
-
-            // 移动端缩小照片尺寸
-            const aspect = img.width / img.height;   
-            const maxSize = 1.0; // 原1.2                    
-            let photoW, photoH;
-
-            if (aspect >= 1) { photoW = maxSize; photoH = maxSize / aspect; } 
-            else { photoH = maxSize; photoW = maxSize * aspect; }
-
-            const frameMargin = 0.12; // 原0.15                
-            const group = new THREE.Group();
-
-            const frameGeo = new THREE.BoxGeometry(photoW + frameMargin, photoH + frameMargin, 0.1);
-            const frameMat = new THREE.MeshStandardMaterial({ 
-                color: 0xd4af37, 
-                metalness: 0.9, // 原1.0
-                roughness: 0.3 // 原0.2
-            });
-            const frame = new THREE.Mesh(frameGeo, frameMat);
-
-            const photoGeo = new THREE.PlaneGeometry(photoW, photoH);
-            const photoMat = new THREE.MeshBasicMaterial({ map: texture });
-            const photo = new THREE.Mesh(photoGeo, photoMat);
-            photo.position.z = 0.06;
-
-            group.add(frame);
-            group.add(photo);
-
-            photoMeshGroup.add(group);
-            
-            particleSystem.push(new Particle(group, 'PHOTO', false));
-        }
-
-        function handleImageUpload(e) {
-            const files = e.target.files; 
-            if(!files.length) return;
-            // 移动端限制同时上传数量
-            const uploadFiles = Array.from(files).slice(0, 3); // 最多传3张
-            uploadFiles.forEach(f => {
-                const reader = new FileReader();
-                reader.onload = (ev) => { 
-                    new THREE.TextureLoader().load(ev.target.result, (t) => { 
-                        t.colorSpace = THREE.SRGBColorSpace; 
-                        t.needsUpdate = true;
-                        addPhotoToScene(t); 
-                    }); 
-                }
-                reader.readAsDataURL(f);
-            });
-        }
-
-        // ==========================================
-        // 7. MediaPipe 手势识别 (移动端降级)
-        // ==========================================
-        async function initMediaPipe() {
-            try {
-                const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
-                handLandmarker = await HandLandmarker.createFromOptions(vision, {
-                    baseOptions: { 
-                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`, 
-                        delegate: "CPU" // 移动端强制CPU，避免GPU兼容问题
-                    },
-                    runningMode: "VIDEO", 
-                    numHands: 1,
-                    minHandDetectionConfidence: 0.7, // 提高检测阈值，减少误判
-                    minHandPresenceConfidence: 0.7,
-                    minTrackingConfidence: 0.7
+        function makeHearts(){
+            hearts=[];
+            for(let i=0;i<total;i++){
+                hearts.push({
+                    x:Math.random()*(canvas.width-100)+50,
+                    y:Math.random()*(canvas.height-100)+50
                 });
-                
-                video = document.getElementById('webcam');
-                const canvasElement = document.getElementById('webcam-preview');
-                canvasCtx = canvasElement.getContext('2d');
-                drawingUtils = new DrawingUtils(canvasCtx);
-                
-                if (navigator.mediaDevices?.getUserMedia) {
-                    try {
-                        // 移动端摄像头适配
-                        const stream = await navigator.mediaDevices.getUserMedia({ 
-                            video: { 
-                                facingMode: "user", 
-                                width: { ideal: 480 }, // 原640，降低分辨率
-                                height: { ideal: 360 },
-                                frameRate: { ideal: 15 } // 降低帧率，减少负载
-                            } 
-                        });
-                        video.srcObject = stream;
-                        
-                        video.addEventListener("loadeddata", () => { 
-                            video.play(); 
-                            
-                            const videoW = video.videoWidth;
-                            const videoH = video.videoHeight;
-                            const aspectRatio = videoW / videoH;
+            }
+        }
 
-                            const targetWidth = 120; 
-                            const targetHeight = targetWidth / aspectRatio;
+        function draw(){
+            if(gameEnd) return;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#fff';
+            ctx.font='26px Microsoft YaHei';
+            ctx.textAlign='center';
+            ctx.fillText(`找到爱心 ${found}/${total}`,canvas.width/2,60);
 
-                            const wrapper = document.getElementById('webcam-wrapper');
-                            wrapper.style.width = `${targetWidth}px`;
-                            wrapper.style.height = `${targetHeight}px`;
-                            
-                            canvasElement.width = videoW;
-                            canvasElement.height = videoH;
+            hearts.forEach(h=>{
+                drawHeart(h.x, h.y, heartSize);
+            });
+        }
 
-                            wrapper.style.opacity = 1; 
-                            predictWebcam(); 
-                        });
-                    } catch (e) { 
-                        console.warn("移动端摄像头访问失败", e); 
+        function gameOver() {
+            gameEnd = true;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#fff';
+            ctx.font='30px Microsoft YaHei';
+            ctx.fillText('恭喜通关！🎉',canvas.width/2,canvas.height/2 - 20);
+            drawEndButtons();
+        }
+
+        canvas.onclick=(e)=>{
+            if(gameEnd) {
+                const rect=canvas.getBoundingClientRect();
+                const mx=e.clientX-rect.left;
+                const my=e.clientY-rect.top;
+                checkButtonClick(mx, my, startFindHeart, startTetris);
+                return;
+            }
+
+            const rect=canvas.getBoundingClientRect();
+            const mx=e.clientX-rect.left;
+            const my=e.clientY-rect.top;
+
+            for(let i=0;i<hearts.length;i++){
+                const d=Math.hypot(mx-hearts[i].x,my-hearts[i].y);
+                if(d<=heartSize){
+                    hearts.splice(i,1);
+                    found++;
+                    draw();
+                    if(found>=total){
+                        gameOver();
+                    }
+                    break;
+                }
+            }
+        };
+
+        makeHearts();
+        draw();
+    }
+
+    // ======================================
+    // 游戏2：俄罗斯方块 —— 10分通关
+    // ======================================
+    function startTetris(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        canvas.onclick=null;
+
+        const COLS = 10;
+        const ROWS = 20;
+        const BLOCK = 22;
+        const GAME_WIDTH  = COLS * BLOCK;
+        const GAME_HEIGHT = ROWS * BLOCK;
+        const ox = (canvas.width  - GAME_WIDTH)  / 2;
+        const oy = (canvas.height - GAME_HEIGHT) / 2;
+
+        const SHAPES = [
+            [[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],
+            [[0,0,1],[1,1,1]],[[1,0,0],[1,1,1]],
+            [[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]
+        ];
+        const COLORS = ['#4fc3f7','#fff176','#ce93d8','#ffb74d','#7986cb','#81c784','#e57373'];
+
+        let board   = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+        let shape, color, x, y;
+        let score = 0;
+        let gameOver = false;
+        let timer;
+
+        function spawn() {
+            let idx = Math.floor(Math.random() * SHAPES.length);
+            shape = SHAPES[idx];
+            color = COLORS[idx];
+            x = Math.floor(COLS/2) - Math.floor(shape[0].length/2);
+            y = 0;
+            if (collide(0,0)) {
+                endGame();
+            }
+        }
+
+        function collide(dx, dy) {
+            for (let yy=0; yy<shape.length; yy++) {
+                for (let xx=0; xx<shape[yy].length; xx++) {
+                    if (shape[yy][xx]) {
+                        let nx = x + xx + dx;
+                        let ny = y + yy + dy;
+                        if (nx < 0 || nx >= COLS || ny >= ROWS) return true;
+                        if (ny >= 0 && board[ny][nx]) return true;
                     }
                 }
-            } catch (e) {
-                console.warn("MediaPipe初始化失败，仅启用触摸控制", e);
+            }
+            return false;
+        }
+
+        function rotate() {
+            let old = shape;
+            let rot = [];
+            for (let xx=0; xx<old[0].length; xx++) {
+                let row = [];
+                for (let yy=old.length-1; yy>=0; yy--) row.push(old[yy][xx]);
+                rot.push(row);
+            }
+            shape = rot;
+            if (collide(0,0)) shape = old;
+        }
+
+        function land() {
+            for (let yy=0; yy<shape.length; yy++)
+                for (let xx=0; xx<shape[yy].length; xx++)
+                    if (shape[yy][xx]) board[y+yy][x+xx] = color;
+            clearLines();
+            spawn();
+        }
+
+        function clearLines() {
+            let linesCleared = 0;
+            for (let r=ROWS-1; r>=0; r--) {
+                if (board[r].every(c => c)) {
+                    board.splice(r, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    linesCleared++;
+                    r++;
+                }
+            }
+            if(linesCleared > 0) {
+                score += linesCleared * 10;
+                if(score >= 10) {
+                    endGame();
+                    return;
+                }
             }
         }
 
-        let lastVideoTime = -1;
-        async function predictWebcam() {
-            const canvasElement = document.getElementById('webcam-preview');
-            if (video.videoWidth && canvasElement.width !== video.videoWidth) { 
-                canvasElement.width = video.videoWidth; 
-                canvasElement.height = video.videoHeight; 
-            }
-            
-            if (lastVideoTime !== video.currentTime) {
-                lastVideoTime = video.currentTime;
-                let result = null;
-                if (handLandmarker) {
-                    try {
-                        result = handLandmarker.detectForVideo(video, performance.now());
-                    } catch (e) {
-                        console.warn("手势检测失败", e);
-                        return;
+        function drop() {
+            if(gameOver) return;
+            if (!collide(0,1)) y++; else land();
+            draw();
+        }
+
+        function draw() {
+            if(gameOver) return;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+
+            ctx.fillStyle = '#222';
+            ctx.fillRect(ox, oy, GAME_WIDTH, GAME_HEIGHT);
+            ctx.strokeStyle = '#e91e63';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(ox, oy, GAME_WIDTH, GAME_HEIGHT);
+
+            for (let r=0; r<ROWS; r++) {
+                for (let c=0; c<COLS; c++) {
+                    if (board[r][c]) {
+                        ctx.fillStyle = board[r][c];
+                        ctx.fillRect(ox + c*BLOCK +1, oy + r*BLOCK +1, BLOCK-2, BLOCK-2);
                     }
                 }
-                
-                canvasCtx.save();
-                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-                canvasCtx.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-                
-                if (result && result.landmarks && result.landmarks.length > 0) {
-                    for (const landmarks of result.landmarks) {
-                        drawingUtils.drawConnectors(landmarks, HandLandmarker.HAND_CONNECTIONS, { color: "#d4af37", lineWidth: 2 }); // 原3
-                        drawingUtils.drawLandmarks(landmarks, { color: "#ffffff", lineWidth: 1, radius: 2 }); // 原3
+            }
+
+            ctx.fillStyle = color;
+            for (let yy=0; yy<shape.length; yy++) {
+                for (let xx=0; xx<shape[yy].length; xx++) {
+                    if (shape[yy][xx]) {
+                        ctx.fillRect(
+                            ox + (x+xx)*BLOCK +1,
+                            oy + (y+yy)*BLOCK +1,
+                            BLOCK-2, BLOCK-2
+                        );
                     }
-                    processGestures(result.landmarks[0]);
-                } else { 
-                    STATE.hand.detected = false; 
                 }
-                canvasCtx.restore();
             }
-            // 移动端降低手势检测帧率
-            setTimeout(() => requestAnimationFrame(predictWebcam), 60); // 约16fps
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '18px Microsoft YaHei';
+            ctx.textAlign = 'center';
+            ctx.fillText(`俄罗斯方块  分数:${score}/10`, canvas.width/2, oy-20);
         }
 
-        function processGestures(lm) {
-            STATE.hand.detected = true;
+        function endGame() {
+            gameOver = true;
+            clearInterval(timer);
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#fff';
+            ctx.font='30px Microsoft YaHei';
+            ctx.fillText('恭喜通关！🎉',canvas.width/2,canvas.height/2 - 20);
+            drawEndButtons();
+        }
 
-            const wrist = lm[0];
-            const indexTip = lm[8];
-            const middleTip = lm[12];
-            const ringTip = lm[16];
-            const pinkyTip = lm[20];
-            const palm = lm[9]; 
+        canvas.onclick = (e) => {
+            if(gameOver) {
+                const rect=canvas.getBoundingClientRect();
+                const mx=e.clientX-rect.left;
+                const my=e.clientY-rect.top;
+                checkButtonClick(mx, my, startTetris, startSnake);
+                return;
+            }
 
-            const dIndex = Math.hypot(indexTip.x - wrist.x, indexTip.y - wrist.y);
-            const dMiddle = Math.hypot(middleTip.x - wrist.x, middleTip.y - wrist.y);
-            const dRing = Math.hypot(ringTip.x - wrist.x, ringTip.y - wrist.y);
-            const dPinky = Math.hypot(pinkyTip.x - wrist.x, pinkyTip.y - wrist.y);
+            let mx = e.clientX;
+            if      (mx < canvas.width/2 - 50 && !collide(-1,0)) x--;
+            else if (mx > canvas.width/2 + 50 && !collide(1,0))  x++;
+            else rotate();
+            draw();
+        };
 
-            // 移动端放宽指点判定条件
-            const isPointing = (dIndex > 0.15) && (dMiddle < 0.1) && (dRing < 0.1) && (dPinky < 0.1);
+        spawn();
+        draw();
+        timer = setInterval(drop, 500);
+    }
+
+    // ======================================
+    // 游戏3：贪吃蛇
+    // ======================================
+    function startSnake(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        canvas.onclick=null;
+
+        const grid=20;
+        let snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+        let food={x:15,y:15};
+        let dir={x:1,y:0};
+        let loop;
+        let gameOver = false;
+
+        function drawHeart(x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x-size/2, y-size/2, x-size, y+size/4, x, y+size/2);
+            ctx.bezierCurveTo(x+size, y+size/4, x+size/2, y-size/2, x, y);
+            ctx.fill();
+        }
+
+        function draw(){
+            if(gameOver) return;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#fff';
+            ctx.font='26px Microsoft YaHei';
+            ctx.textAlign='center';
+            ctx.fillText('贪吃蛇',canvas.width/2,50);
+
+            ctx.fillStyle='#e91e63';
+            snake.forEach(p=>{
+                ctx.fillRect(p.x*grid,p.y*grid,grid-2,grid-2);
+            });
+
+            ctx.fillStyle='#9c27b0';
+            drawHeart(food.x*grid+grid/2, food.y*grid+grid/2, grid/2-2);
+        }
+
+        function endGame() {
+            gameOver = true;
+            clearInterval(loop);
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#fff';
+            ctx.font='30px Microsoft YaHei';
+            ctx.fillText('恭喜通关！🎉',canvas.width/2,canvas.height/2 - 20);
+            drawEndButtons();
+        }
+
+        function move(){
+            if(gameOver) return;
+            const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
             
-            if (isPointing && !STATE.wasPointing) {
-                // 指点切换模式
-                if (STATE.mode === 'TREE') STATE.mode = 'SCATTER';
-                else if (STATE.mode === 'SCATTER') STATE.mode = 'TREE';
-            }
-            STATE.wasPointing = isPointing;
-
-            // 手掌中心计算
-            if (!STATE.hasPalmCenter) {
-                STATE.palmCenter.x = palm.x;
-                STATE.palmCenter.y = palm.y;
-                STATE.hasPalmCenter = true;
+            if(head.x<0||head.y<0||head.x>=canvas.width/grid||head.y>=canvas.height/grid){
+                endGame();
+                return;
             }
 
-            // 旋转控制 (降低灵敏度)
-            const dx = (palm.x - STATE.palmCenter.x) * CONFIG.gestures.sensitivity;
-            const dy = (palm.y - STATE.palmCenter.y) * CONFIG.gestures.sensitivity;
-            
-            STATE.spinVel.y = dx * 0.5;
-            STATE.spinVel.x = dy * 0.5;
-        }
+            snake.unshift(head);
 
-        // ==========================================
-        // 8. 移动端触摸事件处理 (核心新增)
-        // ==========================================
-        function setupEvents() {
-            // 照片上传
-            document.getElementById('btn-add-photo').addEventListener('click', () => {
-                document.getElementById('file-input').click();
-            });
-            document.getElementById('file-input').addEventListener('change', handleImageUpload);
-
-            // 全屏适配 (移动端兼容)
-            document.getElementById('btn-fullscreen').addEventListener('click', () => {
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.documentElement.webkitRequestFullscreen) { // iOS/Safari
-                    document.documentElement.webkitRequestFullscreen();
-                } else if (document.documentElement.webkitRequestFullscreen) { // 微信/安卓
-                    document.documentElement.webkitRequestFullScreen();
-                } else if (window.navigator.standalone) { // iOS 全屏WebApp
-                    console.log("已处于全屏模式");
-                }
-            });
-
-            // 窗口大小调整
-            window.addEventListener('resize', onWindowResize);
-
-            // ========== 移动端触摸事件 ==========
-            // 单指旋转
-            document.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) {
-                    CONFIG.touch.lastTouch = {
-                        x: e.touches[0].clientX,
-                        y: e.touches[0].clientY
-                    };
-                    CONFIG.touch.isPinching = false;
-                } 
-                // 双指捏合缩放
-                else if (e.touches.length === 2) {
-                    CONFIG.touch.isPinching = true;
-                    const dx = e.touches[0].clientX - e.touches[1].clientX;
-                    const dy = e.touches[0].clientY - e.touches[1].clientY;
-                    CONFIG.touch.lastPinchDistance = Math.sqrt(dx*dx + dy*dy);
-                }
-            });
-
-            document.addEventListener('touchmove', (e) => {
-                e.preventDefault(); // 阻止默认滚动
-                
-                // 单指旋转
-                if (e.touches.length === 1 && !CONFIG.touch.isPinching && CONFIG.touch.lastTouch) {
-                    const x = e.touches[0].clientX;
-                    const y = e.touches[0].clientY;
-                    
-                    const deltaX = x - CONFIG.touch.lastTouch.x;
-                    const deltaY = y - CONFIG.touch.lastTouch.y;
-                    
-                    // 应用旋转
-                    STATE.rotation.y += deltaX * CONFIG.touch.rotateSensitivity;
-                    STATE.rotation.x += deltaY * CONFIG.touch.rotateSensitivity;
-                    
-                    // 限制上下旋转角度
-                    STATE.rotation.x = Math.max(-Math.PI/4, Math.min(Math.PI/4, STATE.rotation.x));
-                    
-                    CONFIG.touch.lastTouch = { x, y };
-                } 
-                // 双指缩放
-                else if (e.touches.length === 2 && CONFIG.touch.isPinching) {
-                    const dx = e.touches[0].clientX - e.touches[1].clientX;
-                    const dy = e.touches[0].clientY - e.touches[1].clientY;
-                    const currentDistance = Math.sqrt(dx*dx + dy*dy);
-                    
-                    const delta = currentDistance - CONFIG.touch.lastPinchDistance;
-                    // 调整摄像头距离
-                    CONFIG.camera.z = Math.max(40, Math.min(80, CONFIG.camera.z - delta * CONFIG.touch.scaleSensitivity));
-                    camera.position.z = CONFIG.camera.z;
-                    
-                    CONFIG.touch.lastPinchDistance = currentDistance;
-                }
-            });
-
-            document.addEventListener('touchend', () => {
-                CONFIG.touch.lastTouch = null;
-                CONFIG.touch.isPinching = false;
-            });
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // ==========================================
-        // 9. 动画循环 (移动端性能优化)
-        // ==========================================
-        function animate() {
-            // 移动端使用requestAnimationFrame，但降低帧率优先级
-            requestAnimationFrame(animate);
-            
-            const dt = Math.min(clock.getDelta(), 0.05); // 限制最大delta，避免卡顿
-            STATE.time += dt;
-
-            // 应用旋转
-            mainGroup.rotation.y += STATE.spinVel.y * dt;
-            mainGroup.rotation.x += STATE.spinVel.x * dt;
-            // 触摸旋转叠加
-            mainGroup.rotation.y = STATE.rotation.y;
-            mainGroup.rotation.x = STATE.rotation.x;
-
-            // 粒子更新 (移动端分批更新，减少单帧计算量)
-            const batchSize = 100; // 每帧更新100个粒子
-            const startIndex = Math.floor(STATE.time * 10) % particleSystem.length;
-            for (let i = 0; i < batchSize; i++) {
-                const idx = (startIndex + i) % particleSystem.length;
-                if (particleSystem[idx]) {
-                    particleSystem[idx].update(dt, STATE.time, STATE.mode, STATE.focusTarget);
-                }
+            if(head.x===food.x&&head.y===food.y){
+                food={
+                    x:Math.floor(Math.random()*(canvas.width/grid)),
+                    y:Math.floor(Math.random()*(canvas.height/grid))
+                };
+            }else{
+                snake.pop();
             }
 
-            // 树顶星星旋转
-            if (STATE.starMesh) {
-                STATE.starMesh.rotation.y += dt * 0.5;
-                STATE.starMesh.rotation.x += dt * 0.2;
+            draw();
+        }
+
+        canvas.onclick=(e)=>{
+            if(gameOver) {
+                const rect=canvas.getBoundingClientRect();
+                const mx=e.clientX-rect.left;
+                const my=e.clientY-rect.top;
+                checkButtonClick(mx, my, startSnake, fireworks);
+                return;
             }
 
-            // 渲染
-            composer.render();
-        }
+            const mx=e.clientX, my=e.clientY;
+            const hx=snake[0].x*grid, hy=snake[0].y*grid;
+            if(Math.abs(mx-hx)>Math.abs(my-hy)){
+                dir=mx>hx?{x:1,y:0}:{x:-1,y:0};
+            }else{
+                dir=my>hy?{x:0,y:1}:{x:0,y:-1};
+            }
+        };
 
-        // ==========================================
-        // 10. 下载功能 (移动端适配)
-        // ==========================================
-        function downloadHTML() {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '圣诞树_移动端版.html';
-            // 移动端强制触发点击
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
+        draw();
+        loop=setInterval(move,180);
+    }
 
-        function closeDownloadBtn(e) {
-            e.stopPropagation();
-            document.getElementById('downloadContainer').classList.add('hidden');
+    // ======================================
+    // 最终烟花
+    // ======================================
+    function fireworks(){
+        canvas.style.display='none';
+        for(let i=0;i<150;i++){
+            const f=document.createElement('div');
+            f.className='firework';
+            f.style.left=Math.random()*window.innerWidth+'px';
+            f.style.top=Math.random()*window.innerHeight+'px';
+            f.style.background=`hsl(${Math.random()*60+270},100%,60%)`;
+            document.body.appendChild(f);
+            setTimeout(()=>f.remove(),2000);
         }
+        poemEl.textContent="悦～愿你永远开开心心，余生的甜都给你 ✨";
+        poemEl.classList.add('show');
+        startBtn.style.display='none';
+    }
 
-        // 启动应用
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
+    startBtn.onclick=()=>{
+        startBtn.style.display='none';
+        startFindHeart();
+    };
+
+    window.onload=()=>{
+        nextPoem();
+        for(let i=0;i<30;i++)createHeart(Math.random()*window.innerWidth,Math.random()*window.innerHeight);
+    };
+</script>
 </body>
 </html>
